@@ -7,5 +7,10 @@ examples :https://github.com/adafruit/Adafruit_CircuitPython_Fingerprint.
 
 just tetsing the system 
 
-
+###################################################################
+git add filename
+git commit -m "your comment"
+git push 
+    user name:
+    password :
 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
