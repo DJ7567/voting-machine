@@ -17,11 +17,11 @@ examples :https://github.com/adafruit/Adafruit_CircuitPython_Fingerprint.
 just tetsing the system 
 
 
-done
+
 ################################################ GIT #######################################
 git add filename
 git commit -m "your comment"
 git push 
     user name:
-    password :  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
-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
+    password : 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
+
