@@ -1,5 +1,14 @@
 sudo apt-get update
 sudo apt-get upgrade
+################################################## UART config############################
+enable_uart=1
+dtoverlay=uart1
+dtoverlay=uart2
+dtoverlay=uart3
+dtoverlay=uart4
+dtoverlay=uart5
+
+########################################### figner print sensor ##########################
 
 pip3 install adafruit-circuitpython-fingerprint
 
@@ -7,7 +16,7 @@ examples :https://github.com/adafruit/Adafruit_CircuitPython_Fingerprint.
 
 just tetsing the system 
 
-###################################################################
+################################################ GIT #######################################
 git add filename
 git commit -m "your comment"
 git push 
