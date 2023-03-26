@@ -1,5 +1,5 @@
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get upgrade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
 ################################################## UART config############################
 enable_uart=1
 dtoverlay=uart1
@@ -11,6 +11,8 @@ dtoverlay=uart5
 ########################################### figner print sensor ##########################
 
 pip3 install adafruit-circuitpython-fingerprint
+sudo pip3 install spidev
+sudo pip3 install mfrc522
 
 examples :https://github.com/adafruit/Adafruit_CircuitPython_Fingerprint.
 
