@@ -1,18 +1,18 @@
 import fingerprint_vote as fp
 
 
-a = 0
+a = 1
 
 
-location=pf.vaild_location()
+location=fp.vaild_location(a)
 
-Register_New_FP(location)
+fp.Register_New_FP(location)
+fp.time.sleep(1)
+ID=fp.Find_fingerprint()
 
-ID=Find_fingerprint()
+print("ID :"+ str(ID) +" \n")
 
-print("ID :"+ID +" \n")
-
-delete_pf(location)
+fp.delete_pf(location)
 
 
   
