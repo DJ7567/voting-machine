@@ -16,6 +16,8 @@ examples :https://github.com/adafruit/Adafruit_CircuitPython_Fingerprint.
 
 just tetsing the system 
 
+
+done
 ################################################ GIT #######################################
 git add filename
 git commit -m "your comment"
