@@ -1,0 +1,6 @@
+sudo apt-get update
+sudo apt-get upgrade
+
+pip3 install adafruit-circuitpython-fingerprint
+
+examples :https://github.com/adafruit/Adafruit_CircuitPython_Fingerprint.
