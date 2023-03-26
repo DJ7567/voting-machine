@@ -23,5 +23,5 @@ git add filename
 git commit -m "your comment"
 git push 
     user name:
-    password :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
+    password :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
 
