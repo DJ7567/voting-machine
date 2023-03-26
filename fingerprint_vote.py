@@ -1,10 +1,10 @@
 # importing R305 lib and Serial lib for uart comunication 
-
+import time
 import serial
 import adafruit_fingerprint
 
 # Intiallizing the Uart 
-uart = serial.Serial("/dev/ttyAMA1", baudrate=57600, timeout=1)
+uart = serial.Serial("/dev/ttyAMA2", baudrate=57600, timeout=1)
 
 finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
 
@@ -20,15 +20,15 @@ def Max_Size():
 	
 def vaild_location(a):
 	Max= Max_Size()
-	if a>0 and a<Max:
+	if a>=0 and a<Max:
 		return a
 	else:
 		return -1
         
 def Register_New_FP(location):
     
-    for i in range(1, 3):
-        if i == 1:
+    for fingerimg in range(1, 3):
+        if fingerimg == 1:
             print("Place finger on sensor...", end="")
         else:
             print("Place same finger again...", end="")
@@ -114,7 +114,7 @@ def Find_fingerprint():
     	
   if finger.finger_search() != adafruit_fingerprint.OK:
         return False
-    	#print("Detected #", finger.finger_id, "with confidence", finger.confidence)
+  print("Detected #", finger.finger_id, "with confidence", finger.confidence)
     
   return finger.finger_id
     
