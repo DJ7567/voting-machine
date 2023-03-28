@@ -34,7 +34,7 @@ def Register_New_FP():
     if location == False:
     	print("location problem")
     	return False
-    
+
     for fingerimg in range(1, 3):
         if fingerimg == 1:
             print("Place finger on sensor...", end="")
@@ -54,7 +54,7 @@ def Register_New_FP():
             else:
                 print("Other error")
                 return False
-
+             
 ## Creating a Templete
 
         print("Templating...", end="")
@@ -71,7 +71,16 @@ def Register_New_FP():
             else:
                 print("Other error")
             return False
-
+#################################################  checking that data not already registered
+        if finger.finger_search() != adafruit_fingerprint.OK:
+            return False
+            temp_location=finger.finger_id
+	    for i in range(num):
+                if temp_location == df["PD"[i]] :
+			print("finger print already register ")
+			return False
+		else:
+			pass
 
         if fingerimg == 1:
             print("Remove finger")
