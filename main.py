@@ -81,6 +81,7 @@ def display():
 	df=pd.read_csv("data.csv")
 	print(df)		
 
+
 Registration()
 display()
 verify()
