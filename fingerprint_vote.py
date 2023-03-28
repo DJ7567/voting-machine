@@ -1,14 +1,16 @@
 # importing R305 lib and Serial lib for uart comunication 
 import time
 import serial
+import pandas as pd
 import adafruit_fingerprint
 
 # Intiallizing the Uart 
-uart = serial.Serial("/dev/ttyAMA2", baudrate=57600, timeout=1)
+uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
 
 finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
 
-#pins TX -0/ RX -1
+#pins TX -14/ RX -15
+
 
 
 def Max_Size():
@@ -25,7 +27,13 @@ def vaild_location(a):
 	else:
 		return -1
         
-def Register_New_FP(location):
+def Register_New_FP():
+    df=pd.read_csv("data.csv")
+    num=df.shape[0]   
+    location=vaild_location(num) 
+    if location == False:
+    	print("location problem")
+    	return False
     
     for fingerimg in range(1, 3):
         if fingerimg == 1:
@@ -99,7 +107,7 @@ def Register_New_FP(location):
             print("Other error")
         return False
 
-    return True
+    return location
 
 
 def Find_fingerprint():
@@ -118,7 +126,12 @@ def Find_fingerprint():
     
   return finger.finger_id
     
-def delete_pf(location):
+def delete_pf():
+  df=pd.read_csv("data.csv")
+  num=df.shape[0]   
+  location=vaild_location(num)
+  location= location -1
+  
   if finger.delete_model(location) == adafruit_fingerprint.OK:
             print("Deleted!")
   else:
