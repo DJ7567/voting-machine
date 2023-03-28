@@ -26,8 +26,8 @@ def Register():
    return id
         
 def check_RFID():
+   id, text = reader.read()
    for i in range(num):
-   	id, text = reader.read()
    	if id==df["RFID"][i]:
        		print("RFID MATCH YOU CAN VOTE NOW")
        		ID = df["RFID"][i]
