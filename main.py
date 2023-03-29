@@ -11,16 +11,20 @@ def Phone_numer():
       lenght=df.shape[0]
       flag=1
       ##  checking in data base ##
-      for i in range(lenght):
-          if int(Phone_number)==df["Number"][i]:
+      for j in range(lenght):
+          print(i)
+          print(df["Number"][i])
+          if int(Phone_number)==df["Number"][j]:
           	flag=0
+          print(flag)
       ##  checking is valid ##
       if Phone_number.isdigit() and len(Phone_number) == 10 and flag: 
           return int(Phone_number)
           break
+          
       else:
+          print("false")
           if i==1:
-  
           	return False
           print("plase Enter vaild and unregisted number 10 digit number(One attempt left:")
   
