@@ -25,16 +25,28 @@ def vaild_location(a):
 	if a>=0 and a<Max:
 		return a
 	else:
-		return -1
+		return False
         
 def Register_New_FP():
     df=pd.read_csv("data.csv")
-    num=df.shape[0]   
+    num=df.shape[0]  
     location=vaild_location(num) 
-    if location == False:
+    
+    if location == False and location !=0:
     	print("location problem")
     	return False
-
+    #################################################  checking that data not already registered
+    
+    ID=Find_fingerprint()
+    for i in range(num):
+    	if ID==df["PF"][i]:
+    		print("Finger print already registered")
+    		return -1
+    		
+    if finger.count_templates() != adafruit_fingerprint.OK:
+        raise RuntimeError("Failed to read templates")
+    print("Number of templates found: ", finger.template_count)
+####################################
     for fingerimg in range(1, 3):
         if fingerimg == 1:
             print("Place finger on sensor...", end="")
@@ -50,10 +62,10 @@ def Register_New_FP():
                 print(".", end="")
             elif i == adafruit_fingerprint.IMAGEFAIL:
                 print("Imaging error")
-                return False
+                return -1
             else:
                 print("Other error")
-                return False
+                return -1
              
 ## Creating a Templete
 
@@ -70,23 +82,14 @@ def Register_New_FP():
                 print("Image invalid")
             else:
                 print("Other error")
-            return False
-#################################################  checking that data not already registered
-        if finger.finger_search() != adafruit_fingerprint.OK:
-            return False
-            temp_location=finger.finger_id
-	    for i in range(num):
-                if temp_location == df["PD"[i]] :
-			print("finger print already register ")
-			return False
-		else:
-			pass
+            return -1
 
+#remove
         if fingerimg == 1:
-            print("Remove finger")
-            time.sleep(1)
-            while i != adafruit_fingerprint.NOFINGER:
-                i = finger.get_image()
+        	print("Remove finger")
+        	time.sleep(1)
+        while i != adafruit_fingerprint.NOFINGER:
+        	i = finger.get_image()
                 
 # Creating a model                
 
@@ -99,7 +102,7 @@ def Register_New_FP():
             print("Prints did not match")
         else:
             print("Other error")
-        return False
+        return -1
 
 # storing the model
 
@@ -114,7 +117,7 @@ def Register_New_FP():
             print("Flash storage error")
         else:
             print("Other error")
-        return False
+        return -1
 
     return location
 
@@ -126,23 +129,21 @@ def Find_fingerprint():
   print("Templating...")
     	
   if finger.image_2_tz(1) != adafruit_fingerprint.OK:
-        return False
+        return -1
   print("Searching...")
     	
   if finger.finger_search() != adafruit_fingerprint.OK:
-        return False
+        return -1
   print("Detected #", finger.finger_id, "with confidence", finger.confidence)
-    
+  
   return finger.finger_id
     
-def delete_pf():
-  df=pd.read_csv("data.csv")
-  num=df.shape[0]   
-  location=vaild_location(num)
-  location= location -1
-  
-  if finger.delete_model(location) == adafruit_fingerprint.OK:
+def delete_pf(num):
+  if finger.delete_model(num) == adafruit_fingerprint.OK:
             print("Deleted!")
+            if finger.count_templates() != adafruit_fingerprint.OK:
+            	raise RuntimeError("Failed to read templates")
+            print("Number of templates found: ", finger.template_count)
   else:
             print("Failed to delete")
 	

@@ -7,13 +7,22 @@ import pandas as pd
 def Phone_numer():
   for i in range(2):
       Phone_number=input("Phone number")
-      if Phone_number.isdigit() and len(Phone_number) == 10:
-          return Phone_number
+      df=pd.read_csv("data.csv")
+      lenght=df.shape[0]
+      flag=1
+      ##  checking in data base ##
+      for i in range(lenght):
+          if int(Phone_number)==df["Number"][i]:
+          	flag=0
+      ##  checking is valid ##
+      if Phone_number.isdigit() and len(Phone_number) == 10 and flag: 
+          return int(Phone_number)
           break
       else:
           if i==1:
+  
           	return False
-          print("plase Enter vaild number 10 digit number(One attempt left:")
+          print("plase Enter vaild and unregisted number 10 digit number(One attempt left:")
   
 ########################################################### Register ##################################################
 def Registration():
@@ -30,57 +39,76 @@ def Registration():
   for i in range(2):	
        ID=RFID.Register()
        if ID != False:
-          print("ID is taken :......................")
+          print("\nID is taken :......................\n\n")
+          break
        else:
           if i==1:
           	ID = True
           	return False
           print("try again ....last attempt")
+          time.sleep(2)
 		
        
 #Finger_print
-  ID_finger=fp.Register_New_FP()
-  if ID_finger== False:
-  	return False
-  print("Finger print registered.....")
+
+  for i in range (2):
+	  ID_finger=fp.Register_New_FP()
+	  print(ID_finger)
+	  if ID_finger== -1 and i==1:
+	  	return False
+	  if ID_finger== -1 :
+	  	print("Try...again for last time")
+	  	time.sleep(3);
+	  else:
+	  	break
+  print("\n\nFinger print registered.....\n\n")
   
 	
 # data added to csv
   df=pd.read_csv("data.csv")
-  data = { "RFID" :[ID],"Name" :[name],"Number":[Phone_number],"PF":[ID_finger] }
+  data = { "RFID" :[ID],"Name" :[name],"Number":[Phone_number],"PF":[ID_finger] ,"status" : [0]}
   df1 = pd.DataFrame(data)
   df = pd.concat([df,df1],ignore_index=True)
   df.to_csv("data.csv",index=False)
   time.sleep(2)
-  print("The data is registerd.............Thank you")
+  print("\n\n\nThe data is registerd.............Thank you\n\n")
 	
 ############################################################# Verification #############################################
 
 def verify():
   df=pd.read_csv("data.csv")
   location=RFID.check_RFID()
-  if location!= False:
-       print("Name :" + df["Name"][locaton])
+  print(location)
+  if location!= -1:
+       print("Name :" + df["Name"][location])
        #print("Number :" + str(df["Number"][location]))
   else:
-       print("incorrect")
+       print("!!!! RFID NOT MATCHING WITH DATABASE")
        return False
   
   print("Verify your finger Print")
   ID_finger=fp.Find_fingerprint()
-  if location==False:
-       print("incorrect")
-       return False
+  
   if df["PF"][location]==ID_finger:
        print("Now you can vote")
-       return Ture
+       df["status"][location]=1;
+       #df["status"][location]=0;
+       df.to_csv("data.csv",index=False)
+       return True
+  else:
+       print("Verification fail")
+       return False
+  return True
 
 ################################################################# Delete ################################################
 
 def delete():
     df=pd.read_csv("data.csv")
-    df.drop(index=2)
-    fp.delete_pf(2)
+    num=df.shape[0] -1
+    df=df.drop(index=num)
+    fp.delete_pf(num)
+    df.to_csv("data.csv",index=False)
+    
 
 ################################################################ Display ################################################
 
@@ -91,11 +119,32 @@ def display():
 #################################################################  Main #################################################
 
 
-Registration()
-display()
-verify()
-delete()
-display()
+while True:
+	print("GIVE OUR INPUT HERE :")
+	print("a.display")
+	print("b.Registration")
+	print("c.vote")
+	print("d.delete")
+	
+	Input = input("input :");
+	
+	if Input =="a":
+		display()
+	if Input =="b":
+		Registration()
+	if Input =="c":
+		a=verify()
+		if a:
+			print("vote done")
+		else:
+			print("vote not done")
+	if Input =="d":
+		delete()
+	
+	
+
+
+
 
 
 
