@@ -1,7 +1,8 @@
 import tkinter as tk
 import time 
-import main 
-
+import function as main 
+import GSM 
+import pandas as pd
 
 ######################################################   Main Classs   ##########################################
 class Voting(tk.Tk):
@@ -36,25 +37,14 @@ class LoginFrame(tk.Frame):
         self.master = master
         
         self.canvas = tk.Canvas(self, width=300, height=300)
-        
-        
-        self.label = tk.Label(self, text="Login ID :",font=("Helvetica", 20))
-        
-        
+        self.label = tk.Label(self, text="Login ID :",font=("Helvetica", 20),fg="blue")
         self.username_entry = tk.Entry(self,width = 40 )
-        
-        self.label_new = tk.Label(self, text="Password :",font=("Helvetica", 20))
-        
-        
+        self.label_new = tk.Label(self, text="Password :",font=("Helvetica", 20),fg="blue")
         self.password_entry = tk.Entry(self, show="*",width = 40 )
-        
-        
         self.image2 = tk.PhotoImage(file="images.png")
         self.canvas.create_image(0, 0, anchor="nw", image=self.image2,tag="image")
-        
         self.login_button = tk.Button(self, text="Login", command=self.login)
         self.login_button.configure(bg="black", fg="white", font=("Arial", 20))
-        
         
         self.canvas.grid(column=1,pady=20)
         self.label.grid(row=1, column=0,pady=20)
@@ -66,10 +56,10 @@ class LoginFrame(tk.Frame):
         
         
     def login(self):
-    	#if self.username_entry.get()== "d" and self.password_entry.get() == "v" :
-    	self.master.switch_frame(Select)
-    	#else:
-    		#print("not valid")
+    	if self.username_entry.get()== "Narendra" and self.password_entry.get() == "vote" :
+            self.master.switch_frame(Select)
+    	else:
+    		print("not valid")
         
         
         
@@ -105,41 +95,61 @@ class Verify(tk.Frame):
         self.label_button_RFID.grid(row=1,column=1,pady=30)
         
         self.label_PF.grid(row=2,column=0)
-        self.login_button_PF.grid(row=2,column=2,pady=30)
-        self.label_PF_status.grid(row=2,column=1,pady=30)
+        self.login_button_PF.grid(row=2,column=1,pady=30)
+        self.label_PF_status.grid(row=2,column=2,pady=30)
         
         self.label_OTP.grid(row=3,column=0)
-        self.OTP_entry(row=3,column=1)
+        self.OTP_entry.grid(row=3,column=1)
         self.label_OTP_status.grid(row=3,column=2,pady=30)
         
         self.verify_button.grid(row=4,column=1,ipadx=100)
         
         
-    	
-    		
-    def RFID():	
-    	self.ID=main.RFID()
-    	
-    	if self.ID==False:
-    		self.label_PF_status.configure(text="Invalid RFID")
-    	else:
-    		self.label_PF_status.configure(text="Valid RFID")
-    		
-    def finger_print():
-    	self.ID_finger=main.finger_print_C()
-    	if self.ID_finger==-1:
-    		self.label_RFID_status.configure(text="Invalid figer print")
-    	else:
-    		self.label_RFID_status.configure(text="Valid finger print")
-        
-    def submit(self):
-    		self.phone=self.OTP_entry.get()
-    		if self.flag=="hello":
-    			self.label_OTP_status.configure(text="Invalid phone number")
+    def RFID(self):
+    	self.ID=main.RFID_C()
+    	df=pd.read_csv("data.csv")
+    	num=df.shape[0]
+    	print(num)
+    	for i in range(num): 
+    		print(df["RFID"][i])
+    		if self.ID==df["RFID"][i]:
+    			print(i)
+    			print(df["Number"][i])
+    			self.i=i
+    			print(self.i)
+    		if self.ID==False:
+    			self.label_RFID_status.configure(text="Invalid ",fg="red")
     		else:
-    			self.label_OTP_status.configure(text="phone number is valid")
-    		if self.phone != "hello" and self.RFID != False and self.finger_print !=-1:
-	    		self.save_button.configure(state="normal")
+    			self.label_RFID_status.configure(text="valid ",fg="green")
+    				
+    def finger_print(self):
+    	self.ID_finger=main.finger_print_C()
+    	df=pd.read_csv("data.csv")
+    	num = df.shape[0]
+    	for j in range(num): 
+    		print(df["PF"][j])
+    		if self.ID_finger==df["PF"][j]:
+    			self.j=j
+    			print(self.j)
+    	if self.ID_finger==-1 or self.i!=self.j:
+    			self.label_PF_status.configure(text="Invalid ",fg="red")
+    	else:
+    		self.label_PF_status.configure(text="valid ",fg="green")
+    		if self.ID_finger !=-1 and self.ID != False:
+    			self.OTP=GSM.GSM_OTP(df["Number"][self.j])
+    			print(df["Number"][self.j])
+   
+    def submit(self):
+            self.otp=int(self.OTP_entry.get())
+            #self.OTP=12345
+            if self.otp==self.OTP:
+                    self.label_OTP_status.configure(text="correct",fg="green")
+            else:
+                    self.label_OTP_status.configure(text="not correct",fg="red")
+            if self.otp == self.OTP and self.ID != False and self.ID_finger !=-1:
+                            self.master.switch_frame(Vote)
+	    		
+                    
 	    		
 ######################################################  Registration   ############################################## 
 
@@ -148,28 +158,29 @@ class Registration(tk.Frame):
         super().__init__(master)
         self.master = master
 
-        self.name_label =tk.Label(self, text="Name:",font=("Helvetica", 15))
+        self.name_label =tk.Label(self, text="Name:",font=("Helvetica", 15),fg="orange")
         self.name_entry = tk.Entry(self,width = 40 )
         
         
-        self.phone_label = tk.Label(self, text="Phone Number",font=("Helvetica", 15))
+        self.phone_label = tk.Label(self, text="Phone Number",font=("Helvetica", 15),fg="orange")
         self.phone_label_status = tk.Label(self, text="",font=("Helvetica", 15))
         self.phone_entry = tk.Entry(self,width = 40)
         
         
-        self.label_button_RFID = tk.Button(self, text="RFID Registration", command=self.RFID,font=("Helvetica", 15))
+        self.label_button_RFID = tk.Button(self, text="RFID Registration", command=self.RFID,font=("Helvetica", 15),bg="black",fg="white")
         self.lable_RFID_status = tk.Label(self, text="",font=("Helvetica", 15))
         self.label_RFID = tk.Label(self, text="Place user RFID",font=("Helvetica", 15))
         
         
-        self.label_PF = tk.Label(self, text="Place your RFID card",font=("Helvetica", 15))
+        self.label_PF = tk.Label(self, text="Place your RFID card",font=("Helvetica", 15),fg="green")
         self.label_PF_status = tk.Label(self, text="",font=("Helvetica", 15))
-        self.login_button_PF= tk.Button(self, text="Finger Print Registration",command=self.finger_print,font=("Helvetica", 15))
+        self.login_button_PF= tk.Button(self, text="Finger Print Registration",command=self.finger_print,font=("Helvetica", 15),bg="black",fg="white")
           
-        self.button = tk.Button(self, text="Verify", command=self.take_info,font=("Helvetica", 15))
+        self.button = tk.Button(self, text="Verify", command=self.take_info,font=("Helvetica", 15),bg="black",fg="white")
         
         
         self.save_button = tk.Button(self, text="Save",font=("Helvetica", 15),command=self.save)
+        self.back_button = tk.Button(self, text="Back",font=("Helvetica", 15),command=self.Back)
         self.save_button.configure(state="disabled")
         
         
@@ -190,42 +201,46 @@ class Registration(tk.Frame):
         self.login_button_PF.grid(row=4,column=1,pady=30)
         
         self.button.grid(row=5,column=1,ipadx=100,pady=30)
+        self.back_button.grid(row=6,column=0,ipadx=100)
         self.save_button.grid(row=6,column=1,ipadx=100)
         
         
     def take_info(self):
     	self.name=self.name_entry.get()
     	self.phone=self.phone_entry.get()
-    	self.Phone()
+    	self.Phone(self.phone)
     	
     	if self.phone != "False" and self.RFID != False and self.finger_print !=-1 :
-    		self.save_button.configure(state="normal")
+    		self.save_button.configure(state="normal",bg="black",fg="white")
     		
     	
-    def	Phone(self):
+    def	Phone(self,phone):
     	self.flag=main.Phone_numer(phone)
     	if self.flag==False:
-    		self.phone_label_status.configure(text="Invalid phone number")
+    		self.phone_label_status.configure(text="Invalid phone number",fg="red")
     	else:
-    		self.phone_label_status.configure(text="phone number is valid")
-    def RFID():	
-    	self.ID=main.RFID()
+    		self.phone_label_status.configure(text="phone number is valid",fg="green")
+    def RFID(self):	
+    	self.ID=main.RFID_I()
     	
     	if self.ID==False:
-    		self.lable_RFID_status.configure(text="Invalid RFID")
+    		self.lable_RFID_status.configure(text="Invalid RFID",fg="red")
     	else:
-    		self.lable_RFID_status.configure(text="Valid RFID")
+    		self.lable_RFID_status.configure(text="Valid RFID",fg="green")
     		
-    def finger_print():
+    def finger_print(self):
     	self.ID_finger=main.finger_print_R()
     	if self.ID_finger==-1:
-    		self.label_PF_status.configure(text="Invalid figer print")
+    		self.label_PF_status.configure(text="Invalid figer print",fg="red")
     	else:
-    		self.label_PF_status.configure(text="Valid finger print")
+    		self.label_PF_status.configure(text="Valid finger print",fg="green")
     		
-    def save():
-    	self.main.data_update(self.name,self.phone,self.ID,self.ID_finger)
+    def save(self):
+    	main.data_update(self.name,self.phone,self.ID,self.ID_finger)
     	self.master.switch_frame(Select)
+    	
+    def Back(self):
+        self.master.switch_frame(Select)
    
     	
     
@@ -242,7 +257,7 @@ class Select(tk.Frame):
         self.select_registration_button = tk.Button(self, text="Click Here to Registration New user", command=self.reg,font=("Helvetica", 20),bg="black",fg="white")
         
         
-        self.select_vote_button = tk.Button(self, text="Click Here to Star Vote", command=self.verify,font=("Helvetica",20),bg="black",fg="white")
+        self.select_vote_button = tk.Button(self, text="Click Here to Vote", command=self.verify,font=("Helvetica",20),bg="black",fg="white")
         
         self.label.grid(row=0,column=0)
         self.select_registration_button.grid(row=1,column=0,pady=100)
@@ -270,7 +285,7 @@ class Vote(tk.Frame):
         
         self.vote_option1_button.grid(row=1,column=0,pady=30)
         
-        self.vote_option2_button = tk.Button(self, text="AAP", command=self.submit_2,font=("Helvetica",30),bg="black",fg="white")
+        self.vote_option2_button = tk.Button(self, text="AAP", command=self.submit_1,font=("Helvetica",30),bg="black",fg="white")
         
         self.vote_option2_button.grid(row=2,column=0)
         
